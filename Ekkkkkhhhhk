@@ -1,0 +1,150 @@
+/game-club-app
+   |-- index.html
+   <html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>takichi gaming 
+      Counter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f6fc;
+            color: #333;
+        }
+        .post {
+            margin: 20px auto;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        h1 {
+            color: #4a90e2;
+        }
+        h2 {
+            color: #333;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            background-color: #4a90e2;
+            transition: transform 0.2s ease;
+        }
+        button:hover {
+            background-color: #357abd;
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        .reset-button {
+            background-color: #e74c3c;
+        }
+        .reset-button:hover {
+            background-color: #c0392b;
+        }
+        .count {
+            font-weight: bold;
+            color: #4a90e2;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .highlight {
+            background-color: #ffeb3b;
+            transform: scale(1.2);
+        }
+        .shake {
+            animation: shake 0.3s ease;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Takichi gaming
+    counter</h1>
+    <div id="posts"></div>
+    <script src="script.js"></script>
+</body>
+</html>
+   |-- script.js
+const posts = {
+    "Post 1": { matches: 0, extraTime: 0 },
+    "Post 2": { matches: 0, extraTime: 0 },
+    "Post 3": { matches: 0, extraTime: 0 },
+    "Post 4": { matches: 0, extraTime: 0 },
+    "Post 5": { matches: 0, extraTime: 0 },
+};
+
+// Generate UI
+const postsContainer = document.getElementById("posts");
+
+Object.keys(posts).forEach(postName => {
+    const sanitizedPostName = postName.replace(/\s/g, ''); // Remove spaces for IDs
+    const postDiv = document.createElement("div");
+    postDiv.className = "post";
+    postDiv.innerHTML = `
+        <h2>${postName}</h2>
+        <p>Matches: <span id="${sanitizedPostName}-matches" class="count">0</span></p>
+        <p>Extra Time: <span id="${sanitizedPostName}-extraTime" class="count">0</span></p>
+        <button onclick="addMatch('${postName}')">Add Match</button>
+        <button onclick="addExtraTime('${postName}')">Add Extra Time</button>
+        <button class="reset-button" onclick="resetPost('${postName}')">Reset</button>
+    `;
+    postsContainer.appendChild(postDiv);
+});
+
+// Function to add a match
+function addMatch(postName) {
+    posts[postName].matches++; // Increment matches
+    updateCountDisplay(postName, "matches");
+}
+
+// Function to add extra time
+function addExtraTime(postName) {
+    posts[postName].extraTime++; // Increment extra time
+    updateCountDisplay(postName, "extraTime");
+}
+
+// Function to reset all counts for a post
+function resetPost(postName) {
+    posts[postName] = { matches: 0, extraTime: 0 }; // Reset values
+    const sanitizedPostName = postName.replace(/\s/g, '');
+    document.getElementById(`${sanitizedPostName}-matches`).innerText = 0;
+    document.getElementById(`${sanitizedPostName}-extraTime`).innerText = 0;
+
+    // Add a shake animation
+    const postDiv = document.querySelector(`.post:has(button[onclick="resetPost('${postName}')"])`);
+    postDiv.classList.add("shake");
+    setTimeout(() => postDiv.classList.remove("shake"), 300);
+
+    alert(`${postName} has been reset!`);
+}
+
+// Utility function to update counts with animations
+function updateCountDisplay(postName, countType) {
+    const sanitizedPostName = postName.replace(/\s/g, ''); // Match sanitized ID
+    const countSpan = document.getElementById(`${sanitizedPostName}-${countType}`);
+    countSpan.innerText = posts[postName][countType]; // Update text in the span
+
+    // Add a highlight animation
+    countSpan.classList.add("highlight");
+    setTimeout(() => countSpan.classList.remove("highlight"), 300);
+}
